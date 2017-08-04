@@ -1,0 +1,20 @@
+Ansible Program – 3
+(Configuring Ip addresses with no shut)
+- hosts: all
+gather_facts: true
+connection: local
+tasks:
+- name: config ip address
+ios_config:
+before:
+- default interface FastEthernet1/0
+lines:
+- ip address 40.0.0.10 255.255.255.0
+after:
+- no shutdown
+match: strict
+parents: interface FastEthernet1/0
+host: “{{ ansible_host }}”
+username: arun
+password: arun
+register: config
