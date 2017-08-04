@@ -1,0 +1,29 @@
+Cisco ios
+
+config t
+
+ip domain-name pep
+
+cryto key generate rsa
+
+line vty 0 15
+
+login local
+
+transport input ssh
+
+username arun privilege 15 password arun
+
+# to test ssh
+
+ssh -l arun 10.0.0.1(ip address of your machine where ssh is enabled)
+
+
+Arista veos
+
+config terminal
+
+ip domain-name pep
+
+username arun privilege 15 password arun
+
