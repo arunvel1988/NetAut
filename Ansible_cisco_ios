@@ -1,0 +1,16 @@
+- hosts: netaut
+gather_facts: true
+connection: local
+tasks:
+- name: show ip int brief
+ios_command:
+commands:
+- show ip int brief
+host: “{{ ansible_host }}”
+username: arun
+password: arun
+register: config
+- name: save output to /etc/ansible/backup
+copy:
+content: “{{ config.stdout[0] }}”
+dest: “/etc/ansible/backup/show_ip_int_brief{{ inventory_hostname }}.txt”
