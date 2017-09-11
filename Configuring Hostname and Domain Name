@@ -1,0 +1,31 @@
+- - - 
+- hosts: server
+  gather_facts: no
+  connection: local
+  
+  vars_prompt:
+  - name: “mgmt_username”
+    prompt: “Username”
+    private: no
+
+  - name: “mgmt_password”
+    prompt: “Password”
+
+  tasks:
+
+  - name: Enter Username and Password
+    set_fact:
+      provider:
+        host: “{{ inventory_hostname }}”
+        username: “{{ mgmt_username }}”
+        password: “{{ mgmt_pasword}}”
+
+  - name: configure hostname and domain name
+    ios_system:
+      provider: “{{ provider }}”
+      hostname: Router1
+      domain_name: www.website.com
+      domain_search:
+        - ansible.com
+
+        - cisco.com
