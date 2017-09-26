@@ -1,0 +1,73 @@
+---
+- hosts: router2
+  gather_facts: no
+  connection: local
+
+  vars:
+    int:
+
+   
+      - name: "loopback3"
+        address: "11.11.11.11"
+        netmask: "255.255.255.0"
+        ospf: "yes"
+
+  tasks:
+  - name: obtain login
+    include_vars: creds.yaml
+  - name: define provider
+    set_fact:
+      provider:
+        host: "{{ inventory_hostname }}"
+        username: "{{ creds['username'] }}"
+        password: "{{ creds['password'] }}"
+
+  - name: show version
+    ios_command:
+      provider: "{{ provider }}"
+      commands:
+        - show version
+    register: version
+
+  - debug: var=version.stdout_lines
+
+  - name: config file 
+    template: src=config.j2 
+              dest= " {{ item.name }}.conf "
+
+    vars#:
+      router2:
+        - name: "r1"
+          mgmt_ip: "10.0.0.1"
+          mgmt_user: "arun"
+          mgmt_pass: "123"
+
+          int:
+            - name: "loopback3"
+              address: "11.11.11.11"
+              netmask: "255.255.255.0"
+              ospf: "yes"
+       
+
+      
+  - name: configure interface settings
+    ios_config:
+     # provider: "{{ provider }}"
+      lines:
+        - description loopback interface
+        - ip address 2.2.2.2 255.255.255.0
+      parents: interface loopback0 
+  - name: rip configuration
+    ios_config:
+      provider: "{{ provider }}"
+    lines:
+        - router ospf 1
+        - network 2.2.2.0 0.0.0.255 area 0
+        - network 10.0.0.0 0.0.0.255 area 0
+     
+  - name: load new acl into device
+    ios_config:
+      lines: 
+        - 10 permit ip host 1.1.1.1 any log
+  
+      
